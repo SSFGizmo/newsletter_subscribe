@@ -21,10 +21,8 @@ class SubscriptionRepository extends Repository {
         $query->getQuerySettings()->setIgnoreEnableFields(!$respectEnableFields);
 
         return $query->matching(
-            $query->logicalAnd(
-                $query->equals('uid', $uid),
-                $query->equals('deleted', 0)
-            ))->execute()->getFirst();
+            $query->equals('uid', $uid)
+        )->execute()->getFirst();
     }
 
     public function findOneByEmail($email, $respectEnableFields = true)
@@ -34,10 +32,8 @@ class SubscriptionRepository extends Repository {
         $query->getQuerySettings()->setIgnoreEnableFields(!$respectEnableFields);
 
         return $query->matching(
-            $query->logicalAnd(
-                $query->equals('email', $email),
-                $query->equals('deleted', 0)
-            ))->execute()->getFirst();
+            $query->equals('email', $email)
+        )->execute()->getFirst();
     }
     
     

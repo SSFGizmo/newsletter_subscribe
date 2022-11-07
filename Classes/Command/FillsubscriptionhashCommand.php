@@ -32,15 +32,12 @@ class FillsubscriptionhashCommand extends Command
             ->select('uid', 'pid', 'email', 'crdate', 'tstamp')
             ->from($table)
             ->where(
-                $queryBuilder->expr()->eq('deleted', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT))  
-             )
-              ->andWhere(
-                  $queryBuilder->expr()->orX(
-                      $queryBuilder->expr()->eq('subscription_hash', '\'\''),
-                      $queryBuilder->expr()->isNull('subscription_hash')
-                  )
-              )
-             ->orderBy('uid', 'asc');
+                $queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->eq('subscription_hash', '\'\''),
+                    $queryBuilder->expr()->isNull('subscription_hash')
+                )
+            )
+            ->orderBy('uid', 'asc');
         $rowIterator = $queryBuilder->execute();
         
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($table);

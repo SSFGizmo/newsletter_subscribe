@@ -13,7 +13,7 @@ $EM_CONF['newsletter_subscribe'] = [
 	'constraints' => [
 		'depends' => [
 			'typo3' => '10.4.2-10.4.99',
-            'tt_address' => '4.0.0-5.99.99'
+            'tt_address' => '4.0.0-6.0.99'
         ],
     ],
 ];

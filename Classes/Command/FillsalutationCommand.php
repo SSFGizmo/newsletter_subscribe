@@ -75,16 +75,13 @@ class FillsalutationCommand extends Command
             ->select('uid', 'pid', 'last_name', 'title', 'gender', 'sys_language_uid')
             ->from($table)
             ->where(
-                $queryBuilder->expr()->eq('deleted', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT))  
-             )
-              ->andWhere(
-                  $queryBuilder->expr()->orX(
-                      $queryBuilder->expr()->eq('salutation', '\'\''),
-                      $queryBuilder->expr()->isNull('salutation')
-                  )
-              )
+                $queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->eq('salutation', '\'\''),
+                    $queryBuilder->expr()->isNull('salutation')
+                )
+            )
              //->setMaxResults(10)
-             ->orderBy('uid', 'asc');
+            ->orderBy('uid', 'asc');
         //$io->writeln($queryBuilder->getSQL());
         $rowIterator = $queryBuilder->execute();
         
