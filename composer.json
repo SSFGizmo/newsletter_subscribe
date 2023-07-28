@@ -21,10 +21,9 @@
         "newsletter"
     ],
     "require": {
-        "typo3/cms-core": "^v11.5.16",
-        "friendsoftypo3/tt-address": "^6.1.0 || ^7.0 || ^8.0"
-    }
-    ,
+        "typo3/cms-core": "^v12.4",
+        "friendsoftypo3/tt-address": "^8.0"
+    },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
         "ssch/typo3-encore": "^v4.0.3"
