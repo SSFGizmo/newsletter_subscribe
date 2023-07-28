@@ -1,5 +1,7 @@
 <?php
-defined('TYPO3_MODE') || die('Access denied.');
+declare(strict_types=1);
+
+defined('TYPO3') || die();
 
 call_user_func(
     function()
@@ -59,10 +61,10 @@ call_user_func(
     }
 );
 
-$GLOBALS['TYPO3_CONF_VARS']['FE']['cacheHash']['excludedParameters'][] = 'tx_newslettersubscribe_subscribe[subscriptionHash]';
-$GLOBALS['TYPO3_CONF_VARS']['FE']['cacheHash']['excludedParameters'][] = 'tx_newslettersubscribe_subscribe[uid]';
-$GLOBALS['TYPO3_CONF_VARS']['FE']['cacheHash']['excludedParameters'][] = 'tx_newslettersubscribe_unsubscribe[subscriptionHash]';
-$GLOBALS['TYPO3_CONF_VARS']['FE']['cacheHash']['excludedParameters'][] = 'tx_newslettersubscribe_unsubscribe[uid]';
+foreach(['tx_newslettersubscribe_subscribe[subscriptionHash]', 'tx_newslettersubscribe_subscribe[uid]', 
+'tx_newslettersubscribe_unsubscribe[subscriptionHash]', 'tx_newslettersubscribe_unsubscribe[uid]'] as $parameter) {
+    $GLOBALS['TYPO3_CONF_VARS']['FE']['cacheHash']['excludedParameters'][] = $parameter;
+}
 
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][\Zwo3\NewsletterSubscribe\SchedulerTask\DeleteUnvalidatedSubscribersTask::class] = [
     'extension' => 'newsletter_subscribe',
