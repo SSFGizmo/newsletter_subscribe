@@ -7,13 +7,12 @@ $EM_CONF[$_EXTKEY] = [
     'author' => 'Gregor Agnes',
     'author_email' => 'ga@zwo3.de',
     'author_company' => 'Gregor Agnes & Markus Cousin GbR',
-    'state' => 'stable',
-    'clearCacheOnLoad' => 0,
-    'version' => '5.0.0',
+    'state' => 'alpha',
+    'version' => '6.0.0',
     'constraints' => [
         'depends' => [
-            'typo3' => '11.5.16-11.5.99',
-            'tt_address' => '6.1.0-8.0.99'
+            'typo3' => '12.4.0-12.9.99',
+            'tt_address' => '8.0.0-8.0.99'
         ],
         'conflicts' => [
         ],
@@ -21,4 +20,3 @@ $EM_CONF[$_EXTKEY] = [
         ],
     ],
 ];
-
