@@ -513,10 +513,7 @@ class SubscribeController extends ActionController
         $site = $siteFinder->getSiteByPageId($GLOBALS['TSFE']->id);
         $languageAspect = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getAspect('language');
         $language = $site->getLanguageById($languageAspect->getId());
-        //@TODO
-        //$language->getLocale()->getLanguageCode();
-
-        return $language->getTwoLetterIsoCode();
+        return $language->getLocale()->getLanguageCode();
     }
 
     /**
