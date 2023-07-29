@@ -22,7 +22,7 @@ use TYPO3\CMS\Core\Http\ImmediateResponseException;
 use TYPO3\CMS\Core\Mail\FluidEmail;
 use TYPO3\CMS\Core\Mail\Mailer;
 use TYPO3\CMS\Core\Mail\MailMessage;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Annotation\IgnoreValidation;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
@@ -184,7 +184,11 @@ class SubscribeController extends ActionController
                     );
                     $this->subscriptionRepository->update($existing);
                 } catch (InvalidTemplateResourceException $exception) {
-                    $this->addFlashMessage('Create a template in the Mail Folder for the current language (e.g. de, fr, dk).', 'No E-Mail-Template found', AbstractMessage::ERROR);
+                    $this->addFlashMessage(
+                        'Create a template in the Mail Folder for the current language (e.g. de, fr, dk).', 
+                        'No E-Mail-Template found', 
+                        ContextualFeedbackSeverity::ERROR
+                    );
                 }
             }
         } else {
@@ -235,15 +239,28 @@ class SubscribeController extends ActionController
                 $responseData = json_decode($response);
                 if($responseData->success) {
                     // your success code goes here
-                    //$this->addFlashMessage('Super, geschafft!', '', AbstractMessage::ERROR);
+                    /*
+                    $this->addFlashMessage(
+                        'Super, geschafft!', 
+                        '', 
+                        ContextualFeedbackSeverity::ERROR
+                    );
+                    */
                 }
                 else {
-                    $this->addFlashMessage(LocalizationUtility::translate('captchaWrong', 'NewsletterSubscribe')
-                        , '', AbstractMessage::ERROR);
+                    $this->addFlashMessage(
+                        LocalizationUtility::translate('captchaWrong', 'NewsletterSubscribe'), 
+                        '', 
+                        ContextualFeedbackSeverity::ERROR
+                    );
                     $this->forward('showForm', null, null, ['subscription' => $subscription]);
                 }
             } else {
-                $this->addFlashMessage(LocalizationUtility::translate('captchaWrong', 'NewsletterSubscribe'), '', AbstractMessage::ERROR);
+                $this->addFlashMessage(
+                    LocalizationUtility::translate('captchaWrong', 'NewsletterSubscribe'), 
+                    '', 
+                    ContextualFeedbackSeverity::ERROR
+                );
                 $this->forward('showForm', null, null, ['subscription' => $subscription]);
             }
         }
@@ -273,7 +290,11 @@ class SubscribeController extends ActionController
                     ]
                 );
             } catch (InvalidTemplateResourceException $exception) {
-                $this->addFlashMessage('Create a template in the Mail Folder for the current language (e.g. de, fr, dk).', 'No E-Mail-Template found', AbstractMessage::ERROR);
+                $this->addFlashMessage(
+                    'Create a template in the Mail Folder for the current language (e.g. de, fr, dk).', 
+                    'No E-Mail-Template found', 
+                    ContextualFeedbackSeverity::ERROR
+                );
             }
 
             //$this->subscriptionRepository->update($existing);
@@ -308,7 +329,11 @@ class SubscribeController extends ActionController
                     ]
                 );
             } catch (InvalidTemplateResourceException $exception) {
-                $this->addFlashMessage('Create a template in the Mail Folder for the current language (e.g. de, fr, dk).', 'No E-Mail-Template found', AbstractMessage::ERROR);
+                $this->addFlashMessage(
+                    'Create a template in the Mail Folder for the current language (e.g. de, fr, dk).', 
+                    'No E-Mail-Template found', 
+                    ContextualFeedbackSeverity::ERROR
+                );
             }
 
             $this->view->assignMultiple(['subscription' => $subscription]);
@@ -431,7 +456,11 @@ class SubscribeController extends ActionController
                 [$subscription->getEmail(), ($subscription->getName() ?: '')]
             );
         } catch (InvalidTemplateResourceException $exception) {
-            $this->addFlashMessage('Template for AdminInfo Missing', 'No E-Mail-Template found', AbstractMessage::ERROR);
+            $this->addFlashMessage(
+                'Template for AdminInfo Missing', 
+                'No E-Mail-Template found', 
+                ContextualFeedbackSeverity::ERROR
+            );
         }
     }
 
