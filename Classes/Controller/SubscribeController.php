@@ -509,8 +509,7 @@ class SubscribeController extends ActionController
      */
     protected function getTwoLetterIsoCodeFromSiteConfig() 
     {
-        $siteFinder = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Site\SiteFinder::class);
-        $site = $siteFinder->getSiteByPageId($GLOBALS['TSFE']->id);
+        $site = $this->request->getAttribute('site');
         $languageAspect = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getAspect('language');
         $language = $site->getLanguageById($languageAspect->getId());
         return $language->getLocale()->getLanguageCode();
