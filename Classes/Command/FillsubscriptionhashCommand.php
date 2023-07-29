@@ -43,7 +43,7 @@ class FillsubscriptionhashCommand extends Command
                   )
               )
              ->orderBy('uid', 'asc');
-        $rowIterator = $queryBuilder->execute();
+        $rowIterator = $queryBuilder->executeQuery();
         
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($table);
         
@@ -55,7 +55,7 @@ class FillsubscriptionhashCommand extends Command
                     $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($row['uid'], Connection::PARAM_INT))
                 )
                 ->set('subscription_hash', $subscriptionHash)
-                ->execute();
+                ->executeQuery();
             $counter++;
         }
         

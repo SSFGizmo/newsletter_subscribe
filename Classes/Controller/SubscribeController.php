@@ -85,11 +85,12 @@ class SubscribeController extends ActionController
 
     public function initializeShowFormAction(bool $spambotFailed = null)
     {
+        debug(':)');
         if ($this->settings['useSimpleSpamPrevention'] ?? null) {
             if (
                 GeneralUtility::_POST('iAmNotASpamBot') !== null && GeneralUtility::_POST('iAmNotASpamBot') != $GLOBALS['TSFE']->fe_user->getKey('ses', 'i_am_not_a_robot')
             ) {
-                //leep($this->settings['spamTimeout']);
+                //sleep($this->settings['spamTimeout']);
                 $this->request->setArgument('spambotFailed', true);
                 //$this->view->assign('spambotFailed', 1);
             }
@@ -151,7 +152,7 @@ class SubscribeController extends ActionController
      * @throws IllegalObjectTypeException
      * @throws UnknownObjectException
      */
-    public function createUnsubscribeMailAction(?string $email = null): ResponseInterface
+    public function createUnsubscribeMailAction(?string $email = null): ?ResponseInterface
     {
         if (!FormProtectionFactory::get('frontend')
             ->validateToken(
@@ -387,7 +388,7 @@ class SubscribeController extends ActionController
         return $this->htmlResponse();
     }
 
-    public function undosubscribeAction(?int $uid = null, ?string $subscriptionHash = null)
+    public function undosubscribeAction(?int $uid = null, ?string $subscriptionHash = null): ?ResponseInterface
     {
         $this->redirect('unsubscribe', null, null, compact('uid', 'subscriptionHash'));
     }
@@ -443,7 +444,7 @@ class SubscribeController extends ActionController
         return $this->htmlResponse();
     }
 
-    public function sendAdminInfo(Subscription $subscription, int $unsubscribeaction = 0)
+    public function sendAdminInfo(Subscription $subscription, int $unsubscribeaction = 0): void
     {
         $subject = $unsubscribeaction == 0 ? LocalizationUtility::translate('unsubscription', 'newsletterSubscribe') : LocalizationUtility::translate('newSubscription', 'newsletterSubscribe');
 
@@ -467,7 +468,8 @@ class SubscribeController extends ActionController
         }
     }
 
-    protected function addSalutation(&$subscription) {
+    protected function addSalutation(&$subscription): void 
+    {
         if(isset($this->settings['addsalutation']) && $this->settings['addsalutation']) {
             $twoLetterIsoCode = $this->prepareTwoLetterIsoCode();
             if(isset($this->settings['salutation'][$twoLetterIsoCode])) {
@@ -489,7 +491,8 @@ class SubscribeController extends ActionController
      *
      * @return string
      */
-    protected function getTwoLetterIsoCodeFromSiteConfig() {
+    protected function getTwoLetterIsoCodeFromSiteConfig() 
+    {
         $siteFinder = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Site\SiteFinder::class);
         $site = $siteFinder->getSiteByPageId($GLOBALS['TSFE']->id);
         $languageAspect = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getAspect('language');
@@ -501,7 +504,8 @@ class SubscribeController extends ActionController
      *
      * @return string
      */
-    protected function prepareTwoLetterIsoCode() {
+    protected function prepareTwoLetterIsoCode(): string
+    {
         if(!empty($GLOBALS['TSFE']->config['config']['language'])) {
             $twoLetterIsoCode = $GLOBALS['TSFE']->config['config']['language'];
         }
@@ -521,7 +525,14 @@ class SubscribeController extends ActionController
      * @param array $replyTo replyTo Address
      * @return boolean TRUE on success, otherwise false
      */
-    protected function sendTemplateEmail(array $recipient, array $sender, $subject, $templateName = 'Mail/Default', array $variables = array(), array $replyTo = null, array $attachments = [])
+    protected function sendTemplateEmail(
+        array $recipient, 
+        array $sender, 
+        string $subject, 
+        string $templateName = 'Mail/Default', 
+        array $variables = [], 
+        array $replyTo = null, 
+        array $attachments = []): bool
     {
         $templatePaths = new TemplatePaths();
 
@@ -565,7 +576,11 @@ class SubscribeController extends ActionController
      * @param int $multiplier multipliere * hitnumber = seconds to wait,
      * @return Subscription
      */
-    protected function setSleep(Subscription $subscription, $maxSleeptime = 300, $multiplier = 2): Subscription
+    protected function setSleep(
+        Subscription $subscription, 
+        int $maxSleeptime = 300, 
+        int $multiplier = 2
+    ): Subscription
     {
         $sleepTime = $subscription->getHitNumber() * $multiplier;
         if (time() > $subscription->getLastHit() + $maxSleeptime) {
@@ -585,7 +600,7 @@ class SubscribeController extends ActionController
     /**
      * @return bool The flash message or FALSE if no flash message should be set
      */
-    protected function getErrorFlashMessage()
+    protected function getErrorFlashMessage(): bool
     {
         return false;
     }

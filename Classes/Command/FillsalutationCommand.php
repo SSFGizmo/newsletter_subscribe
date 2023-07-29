@@ -88,7 +88,7 @@ class FillsalutationCommand extends Command
              //->setMaxResults(10)
              ->orderBy('uid', 'asc');
         //$io->writeln($queryBuilder->getSQL());
-        $rowIterator = $queryBuilder->execute();
+        $rowIterator = $queryBuilder->executeQuery();
         
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($table);
         
@@ -107,7 +107,7 @@ class FillsalutationCommand extends Command
                         $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($row['uid'], Connection::PARAM_INT))
                     )
                     ->set('salutation', $salutation)
-                    ->execute();
+                    ->executeQuery();
                 $counter++;
             }
         }
