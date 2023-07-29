@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Zwo3\NewsletterSubscribe\SchedulerTask;
 
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 use TYPO3\CMS\Scheduler\AbstractAdditionalFieldProvider;
@@ -35,7 +36,7 @@ class DeleteUnvalidatedSubscribersTaskAdditionalFieldProvider extends AbstractAd
         $currentSchedulerModuleAction = $schedulerModule->getCurrentAction();
         
         $additionalFields = [];
-// Initialize extra field value
+        // Initialize extra field value
         if (empty($taskInfo['days'])) {
             if ($currentSchedulerModuleAction->equals(Action::ADD)) {
                 // In case of new task and if field is empty, set default days address
@@ -97,15 +98,19 @@ class DeleteUnvalidatedSubscribersTaskAdditionalFieldProvider extends AbstractAd
     ): bool {
         $submittedData['days'] = intval(trim($submittedData['newsletter_subscribe']['days']));
         if (empty($submittedData['days']) || $submittedData['days'] < 7 || !is_int($submittedData['days'])) {
-            $this->addMessage($this->getLanguageService()->sL('LLL:EXT:newsletter_subscribe/Resources/Private/Language/locallang.xlf:error.schedulerAge'),
-                \TYPO3\CMS\Core\Messaging\FlashMessage::ERROR);
+            $this->addMessage(
+                $this->getLanguageService()->sL('LLL:EXT:newsletter_subscribe/Resources/Private/Language/locallang.xlf:error.schedulerAge'),
+                ContextualFeedbackSeverity::ERROR
+            );
             $dayResult = false;
         } else {
             $dayResult = true;
         }
         if (!preg_match('/^[0-9]+(,[0-9]*)*$/', $submittedData['newsletter_subscribe']['pids'])) {
-            $this->addMessage($this->getLanguageService()->sL('LLL:EXT:newsletter_subscribe/Resources/Private/Language/locallang.xlf:error.schedulerPids'),
-                \TYPO3\CMS\Core\Messaging\FlashMessage::ERROR);
+            $this->addMessage(
+                $this->getLanguageService()->sL('LLL:EXT:newsletter_subscribe/Resources/Private/Language/locallang.xlf:error.schedulerPids'),
+                ContextualFeedbackSeverity::ERROR
+            );
             $pidResult = false;
         } else {
             $pidResult = true;

@@ -10,7 +10,7 @@ use Zwo3\NewsletterSubscribe\Utility\DeleteUnvalidatedSubscribers;
 class DeleteUnvalidatedSubscribersTask extends AbstractTask
 {
     /** @var int  */
-    public $days;
+    public int $days;
     
     public function execute()
     {
