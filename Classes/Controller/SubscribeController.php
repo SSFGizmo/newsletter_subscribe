@@ -109,7 +109,7 @@ class SubscribeController extends ActionController
     public function showFormAction(Subscription $subscription = null, bool $spambotFailed = null): ResponseInterface
     {
         $formToken = FormProtectionFactory::get('frontend')
-            ->generateToken('Subscribe', 'showForm', $this->configurationManager->getContentObject()->data['uid']);
+            ->generateToken('Subscribe', 'showForm', $this->request->getAttribute('currentContentObject')->data['uid']);
 
         $fields = array_map('trim', explode(',', $this->settings['showFields']));
 
@@ -138,7 +138,7 @@ class SubscribeController extends ActionController
     public function showUnsubscribeFormAction(?string $message = null): ResponseInterface
     {
         $formToken = FormProtectionFactory::get('frontend')
-            ->generateToken('Subscribe', 'showUnsubscribeForm', $this->configurationManager->getContentObject()->data['uid']);
+            ->generateToken('Subscribe', 'showUnsubscribeForm', $this->request->getAttribute('currentContentObject')->data['uid']);
 
         $this->view->assignMultiple([
             'dataProtectionPage' => $this->settings['dataProtectionPage'],
@@ -160,7 +160,7 @@ class SubscribeController extends ActionController
         if (!FormProtectionFactory::get('frontend')
             ->validateToken(
                 (string)($this->request->getParsedBody()['formToken'] ?? ''),
-                'Subscribe', 'showUnsubscribeForm', $this->configurationManager->getContentObject()->data['uid']
+                'Subscribe', 'showUnsubscribeForm', $this->request->getAttribute('currentContentObject')->data['uid']
             )) {
             $this->redirect('showUnsubscribeForm');
         }
@@ -204,13 +204,14 @@ class SubscribeController extends ActionController
         return $this->htmlResponse();
     }
 
-    public function initializeCreateConfirmationAction(): ResponseInterface
+    public function initializeCreateConfirmationAction(): ?ResponseInterface
     {
         if (!$this->request->hasArgument('subscription')) {
             return (new ForwardResponse('showForm'))
             ->withControllerName('Subscribe')
             ->withExtensionName('newsletter_subscribe');
         }
+        return null;
     }
 
     /**
@@ -220,7 +221,7 @@ class SubscribeController extends ActionController
      */
     public function createConfirmationAction(Subscription $subscription): ResponseInterface
     {
-        if ($this->settings['useSimpleSpamPrevention']) {
+        if ($this->settings['useSimpleSpamPrevention'] ?? false) {
             if (
                 !empty($this->request->getParsedBody()['iAmNotASpamBotHere'] ?? '') ||
                 ($this->request->getParsedBody()['iAmNotASpamBot'] ?? '') != $GLOBALS['TSFE']->fe_user->getKey('ses', 'i_am_not_a_robot')
@@ -230,7 +231,7 @@ class SubscribeController extends ActionController
             }
         }
 
-        if ($this->settings['useHCaptcha']) {
+        if ($this->settings['useHCaptcha'] ?? false) {
             if (($this->request->getParsedBody()['h-captcha-response'] ?? false)) {
                 $data = [
                     'secret' => $this->settings['hCaptchaSecretKey'],
@@ -275,7 +276,7 @@ class SubscribeController extends ActionController
         if (!FormProtectionFactory::get('frontend')
             ->validateToken(
                 (string)($this->request->getParsedBody()['formToken'] ?? ''),
-                'Subscribe', 'showForm', $this->configurationManager->getContentObject()->data['uid']
+                'Subscribe', 'showForm', $this->request->getAttribute('currentContentObject')->data['uid']
             )) {
             return (new ForwardResponse('showForm'))->withArguments(['subscription' => $subscription]);
         }
