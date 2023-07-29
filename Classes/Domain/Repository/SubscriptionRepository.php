@@ -14,7 +14,7 @@ use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
  */
 class SubscriptionRepository extends Repository {
 
-    public function findByUid($uid, $respectEnableFields = true)
+    public function findByUid(int $uid, bool $respectEnableFields = true)
     {
         $query = $this->createQuery();
         $query->getQuerySettings()->setRespectStoragePage(false);
@@ -28,7 +28,7 @@ class SubscriptionRepository extends Repository {
             ))->execute()->getFirst();
     }
 
-    public function findOneByEmail($email, $respectEnableFields = true)
+    public function findOneByEmail(string $email, bool $respectEnableFields = true)
     {
         $query = $this->createQuery();
         $query->getQuerySettings()->setRespectSysLanguage(false);
@@ -41,8 +41,7 @@ class SubscriptionRepository extends Repository {
             ))->execute()->getFirst();
     }
     
-    
-    public function findOldUnvalidated($days, $pids)
+    public function findOldUnvalidated(int $days, string $pids)
     {
         $query = $this->createQuery();
         $query->matching(
@@ -58,5 +57,4 @@ class SubscriptionRepository extends Repository {
         
         return $query->execute();
     }
-    
 }
