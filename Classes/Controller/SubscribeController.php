@@ -91,9 +91,8 @@ class SubscribeController extends ActionController
     public function initializeShowFormAction(bool $spambotFailed = null): void
     {
         if ($this->settings['useSimpleSpamPrevention'] ?? null) {
-            if (
-                GeneralUtility::_POST('iAmNotASpamBot') !== null && GeneralUtility::_POST('iAmNotASpamBot') != $GLOBALS['TSFE']->fe_user->getKey('ses', 'i_am_not_a_robot')
-            ) {
+            $iAmNotASpamBot = $this->request->getParsedBody()['iAmNotASpamBot'] ?? null;
+            if ($iAmNotASpamBot !== null && $iAmNotASpamBot != $GLOBALS['TSFE']->fe_user->getKey('ses', 'i_am_not_a_robot')) {
                 //sleep($this->settings['spamTimeout']);
                 $this->request->setArgument('spambotFailed', true);
                 //$this->view->assign('spambotFailed', 1);
@@ -160,7 +159,7 @@ class SubscribeController extends ActionController
     {
         if (!FormProtectionFactory::get('frontend')
             ->validateToken(
-                (string)GeneralUtility::_POST('formToken'),
+                (string)($this->request->getParsedBody()['formToken'] ?? ''),
                 'Subscribe', 'showUnsubscribeForm', $this->configurationManager->getContentObject()->data['uid']
             )) {
             $this->redirect('showUnsubscribeForm');
@@ -223,8 +222,8 @@ class SubscribeController extends ActionController
     {
         if ($this->settings['useSimpleSpamPrevention']) {
             if (
-                !empty(GeneralUtility::_POST('iAmNotASpamBotHere')) ||
-                GeneralUtility::_POST('iAmNotASpamBot') != $GLOBALS['TSFE']->fe_user->getKey('ses', 'i_am_not_a_robot')
+                !empty($this->request->getParsedBody()['iAmNotASpamBotHere'] ?? '') ||
+                ($this->request->getParsedBody()['iAmNotASpamBot'] ?? '') != $GLOBALS['TSFE']->fe_user->getKey('ses', 'i_am_not_a_robot')
             ) {
                 sleep($this->settings['spamTimeout']);
                 return (new ForwardResponse('showForm'))->withArguments(['subscription' => $subscription, 'spambotFailed' => true]);
@@ -232,7 +231,7 @@ class SubscribeController extends ActionController
         }
 
         if ($this->settings['useHCaptcha']) {
-            if (GeneralUtility::_POST('h-captcha-response')) {
+            if (($this->request->getParsedBody()['h-captcha-response'] ?? false)) {
                 $data = [
                     'secret' => $this->settings['hCaptchaSecretKey'],
                     'response' => GeneralUtility::_GP('h-captcha-response')
@@ -275,7 +274,7 @@ class SubscribeController extends ActionController
 
         if (!FormProtectionFactory::get('frontend')
             ->validateToken(
-                (string)GeneralUtility::_POST('formToken'),
+                (string)($this->request->getParsedBody()['formToken'] ?? ''),
                 'Subscribe', 'showForm', $this->configurationManager->getContentObject()->data['uid']
             )) {
             return (new ForwardResponse('showForm'))->withArguments(['subscription' => $subscription]);
