@@ -103,9 +103,8 @@ class SubscribeController extends ActionController
         if ($this->settings['useSimpleSpamPrevention'] ?? null) {
             $iAmNotASpamBot = $this->request->getParsedBody()['iAmNotASpamBot'] ?? null;
             if ($iAmNotASpamBot !== null && $iAmNotASpamBot != $GLOBALS['TSFE']->fe_user->getKey('ses', 'i_am_not_a_robot')) {
-                //sleep($this->settings['spamTimeout']);
+                //@TODO Call to undefined method TYPO3\CMS\Extbase\Mvc\Request::setArgument()
                 $this->request->setArgument('spambotFailed', true);
-                //$this->view->assign('spambotFailed', 1);
             }
         }
     }
@@ -246,7 +245,7 @@ class SubscribeController extends ActionController
             if (($this->request->getParsedBody()['h-captcha-response'] ?? false)) {
                 $data = [
                     'secret' => $this->settings['hCaptchaSecretKey'],
-                    'response' => GeneralUtility::_GP('h-captcha-response')
+                    'response' => $this->request->getParsedBody()['h-captcha-response'] ?? $this->request->getQueryParams()['h-captcha-response'] ?? null
                 ];
                 $verify = curl_init();
                 curl_setopt($verify, CURLOPT_URL, "https://hcaptcha.com/siteverify");
