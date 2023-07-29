@@ -48,7 +48,7 @@ class ContainsViewHelper extends AbstractConditionViewHelper
      * @param array $arguments
      * @return bool
      */
-    protected static function evaluateCondition($arguments = null)
+    protected static function evaluateCondition($arguments = null): bool
     {
         return false !== static::assertHaystackHasNeedle($arguments['haystack'], $arguments['needle'], $arguments);
     }
@@ -58,7 +58,7 @@ class ContainsViewHelper extends AbstractConditionViewHelper
      * @param array $arguments
      * @return mixed
      */
-    protected static function getNeedleAtIndex($index, $arguments)
+    protected static function getNeedleAtIndex(int $index, array $arguments)
     {
         if (0 > $index) {
             return null;
@@ -88,7 +88,7 @@ class ContainsViewHelper extends AbstractConditionViewHelper
      * @param array $arguments
      * @return boolean|integer
      */
-    protected static function assertHaystackHasNeedle($haystack, $needle, $arguments)
+    protected static function assertHaystackHasNeedle($haystack, $needle, array $arguments): bool|int
     {
         if (true === is_array($haystack)) {
             return static::assertHaystackIsArrayAndHasNeedle($haystack, $needle, $arguments);
@@ -109,7 +109,7 @@ class ContainsViewHelper extends AbstractConditionViewHelper
      * @param mixed $needle
      * @return boolean|integer
      */
-    protected static function assertHaystackIsQueryResultAndHasNeedle($haystack, $needle)
+    protected static function assertHaystackIsQueryResultAndHasNeedle($haystack, $needle): bool|int
     {
         if (true === $needle instanceof DomainObjectInterface) {
             /** @var $needle DomainObjectInterface */
@@ -129,7 +129,7 @@ class ContainsViewHelper extends AbstractConditionViewHelper
      * @param mixed $needle
      * @return boolean|integer
      */
-    protected static function assertHaystackIsObjectStorageAndHasNeedle($haystack, $needle)
+    protected static function assertHaystackIsObjectStorageAndHasNeedle($haystack, $needle): bool|int
     {
         $index = 0;
         /** @var $candidate DomainObjectInterface */
@@ -151,7 +151,7 @@ class ContainsViewHelper extends AbstractConditionViewHelper
      * @param array $arguments
      * @return boolean|integer
      */
-    protected static function assertHaystackIsArrayAndHasNeedle($haystack, $needle, $arguments)
+    protected static function assertHaystackIsArrayAndHasNeedle($haystack, $needle, array $arguments): bool|int
     {
         if (false === $needle instanceof DomainObjectInterface) {
             if (true === (boolean) $arguments['considerKeys']) {
@@ -177,7 +177,7 @@ class ContainsViewHelper extends AbstractConditionViewHelper
      * @param mixed $needle
      * @return boolean|integer
      */
-    protected static function assertHaystackIsStringAndHasNeedle($haystack, $needle)
+    protected static function assertHaystackIsStringAndHasNeedle($haystack, $needle): bool|int
     {
         return strpos($haystack, $needle);
     }

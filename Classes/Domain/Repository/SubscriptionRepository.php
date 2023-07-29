@@ -14,7 +14,7 @@ use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
  */
 class SubscriptionRepository extends Repository {
 
-    public function findByUid(int $uid, bool $respectEnableFields = true)
+    public function findSubscriptionByUid(int $uid, bool $respectEnableFields = true)
     {
         $query = $this->createQuery();
         $query->getQuerySettings()->setRespectStoragePage(false);
