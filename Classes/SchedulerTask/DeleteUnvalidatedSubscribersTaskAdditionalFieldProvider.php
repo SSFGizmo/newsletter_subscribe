@@ -126,7 +126,7 @@ class DeleteUnvalidatedSubscribersTaskAdditionalFieldProvider extends AbstractAd
      * @param array $submittedData Array containing the data submitted by the user
      * @param AbstractTask $task Reference to the current task object
      */
-    public function saveAdditionalFields(array $submittedData, AbstractTask $task)
+    public function saveAdditionalFields(array $submittedData, AbstractTask $task): void
     {
         $task->days = (int)$submittedData['newsletter_subscribe']['days'];
         $task->pids = $submittedData['newsletter_subscribe']['pids'];

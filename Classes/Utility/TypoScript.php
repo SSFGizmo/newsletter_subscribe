@@ -22,7 +22,7 @@ class TypoScript
      * @param array $overload
      * @return array
      */
-    public function override(array $base, array $overload)
+    public function override(array $base, array $overload): array
     {
         $validFields = GeneralUtility::trimExplode(',', $overload['settings']['overrideFlexformSettingsIfEmpty'], true);
         foreach ($validFields as $fieldName) {
@@ -58,7 +58,7 @@ class TypoScript
      * @param array $path
      * @return array|null
      */
-    protected function getValue(array $data, array $path)
+    protected function getValue(array $data, array $path): array|null
     {
         $found = true;
 
@@ -86,7 +86,7 @@ class TypoScript
      * @param $value
      * @return array
      */
-    protected function setValue(array $array, $path, $value)
+    protected function setValue(array $array, $path, $value): array
     {
         $this->setValueByReference($array, $path, $value);
 
@@ -101,7 +101,7 @@ class TypoScript
      * @param array $path
      * @param $value
      */
-    private function setValueByReference(array &$array, array $path, $value)
+    private function setValueByReference(array &$array, array $path, $value): void
     {
         while (count($path) > 1) {
             $key = array_shift($path);
