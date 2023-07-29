@@ -27,6 +27,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Annotation\IgnoreValidation;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Event\Mvc\BeforeActionCallEvent;
+use TYPO3\CMS\Extbase\Http\ForwardResponse;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
@@ -199,10 +200,12 @@ class SubscribeController extends ActionController
         return $this->htmlResponse();
     }
 
-    public function initializeCreateConfirmationAction()
+    public function initializeCreateConfirmationAction(): ResponseInterface
     {
         if (!$this->request->hasArgument('subscription')) {
-            $this->forward('showForm', 'Subscribe', 'newsletter_subscribe');
+            return (new ForwardResponse('showForm'))
+            ->withControllerName('Subscribe')
+            ->withExtensionName('newsletter_subscribe');
         }
     }
 
@@ -219,7 +222,7 @@ class SubscribeController extends ActionController
                 GeneralUtility::_POST('iAmNotASpamBot') != $GLOBALS['TSFE']->fe_user->getKey('ses', 'i_am_not_a_robot')
             ) {
                 sleep($this->settings['spamTimeout']);
-                $this->forward('showForm', null, null, ['subscription' => $subscription, 'spambotFailed' => true]);
+                return (new ForwardResponse('showForm'))->withArguments(['subscription' => $subscription, 'spambotFailed' => true]);
             }
         }
 
@@ -253,7 +256,7 @@ class SubscribeController extends ActionController
                         '', 
                         ContextualFeedbackSeverity::ERROR
                     );
-                    $this->forward('showForm', null, null, ['subscription' => $subscription]);
+                    return (new ForwardResponse('showForm'))->withArguments(['subscription' => $subscription]);
                 }
             } else {
                 $this->addFlashMessage(
@@ -261,7 +264,7 @@ class SubscribeController extends ActionController
                     '', 
                     ContextualFeedbackSeverity::ERROR
                 );
-                $this->forward('showForm', null, null, ['subscription' => $subscription]);
+                return (new ForwardResponse('showForm'))->withArguments(['subscription' => $subscription]);
             }
         }
 
@@ -270,7 +273,7 @@ class SubscribeController extends ActionController
                 (string)GeneralUtility::_POST('formToken'),
                 'Subscribe', 'showForm', $this->configurationManager->getContentObject()->data['uid']
             )) {
-            $this->forward('showForm', null, null, ['subscription' => $subscription]);
+            return (new ForwardResponse('showForm'))->withArguments(['subscription' => $subscription]);
         }
         // already subscribed
         if ($existing = $this->subscriptionRepository->findOneByEmail($subscription->getEmail(), false)) {
