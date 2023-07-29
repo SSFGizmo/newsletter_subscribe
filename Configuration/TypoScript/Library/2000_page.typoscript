@@ -15,7 +15,6 @@
 		}
 	}
 
-
 	page.includeCSS {
 		# Pattern typo3_encore:entryName
 		NewsletterSubscribe = typo3_encore:NewsletterSubscribe:NewsletterSubscribe

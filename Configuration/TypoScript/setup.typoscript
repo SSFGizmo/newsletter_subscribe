@@ -1,4 +1,4 @@
-<INCLUDE_TYPOSCRIPT: source="DIR: ./Library" extensions="typoscript">
+@import 'EXT:newsletter_subscribe/Configuration/TypoScript/Library/'
 
 plugin {
 	tx_newslettersubscribe {
