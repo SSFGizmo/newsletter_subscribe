@@ -32,8 +32,6 @@ trait OverrideEmptyFlexformValuesTrait {
             'newslettersubscribe_subscribe'
         );
         
-
-
         $originalSettings = $this->configurationManager->getConfiguration(
             \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS
         );

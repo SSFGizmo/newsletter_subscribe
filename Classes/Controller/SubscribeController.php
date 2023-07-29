@@ -55,17 +55,18 @@ use Zwo3\NewsletterSubscribe\Traits\OverrideEmptyFlexformValuesTrait;
  */
 class SubscribeController extends ActionController
 {
-    use OverrideEmptyFlexformValuesTrait;
+    //@TODO !!! => Call to a member function addNewArgument() on null
+    #use OverrideEmptyFlexformValuesTrait;
 
     /**
      * @var PersistenceManager
      */
     protected $persistenceManager;
 
-    /**
+    /*
      * @var SubscriptionRepository
      */
-    protected $subscriptionRepository;
+    private ?SubscriptionRepository $subscriptionRepository = null;
 
     /**
      * @var OverrideEmptyFlexformValues
@@ -77,15 +78,18 @@ class SubscribeController extends ActionController
      */
     protected $configurationManager;
 
-    public function initializeAction()
+    public function injectSubscriptionRepository(SubscriptionRepository $subscriptionRepository)
     {
-        $this->persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);
-        $this->subscriptionRepository = GeneralUtility::makeInstance(SubscriptionRepository::class);
+        $this->subscriptionRepository = $subscriptionRepository;
     }
 
-    public function initializeShowFormAction(bool $spambotFailed = null)
+    public function initializeAction(): void
     {
-        debug(':)');
+        $this->persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);
+    }
+
+    public function initializeShowFormAction(bool $spambotFailed = null): void
+    {
         if ($this->settings['useSimpleSpamPrevention'] ?? null) {
             if (
                 GeneralUtility::_POST('iAmNotASpamBot') !== null && GeneralUtility::_POST('iAmNotASpamBot') != $GLOBALS['TSFE']->fe_user->getKey('ses', 'i_am_not_a_robot')
@@ -355,7 +359,7 @@ class SubscribeController extends ActionController
     {
 
         /** @var Subscription $subscription */
-        $subscription = $this->subscriptionRepository->findByUid($uid, false);
+        $subscription = $this->subscriptionRepository->findSubscriptionByUid($uid, false);
         $success = false;
         if ($subscription) {
             if ($subscriptionHash == $subscription->getSubscriptionHash()) {
@@ -402,7 +406,7 @@ class SubscribeController extends ActionController
     public function doConfirmAction(?int $uid = null, ?string $subscriptionHash = null): ResponseInterface
     {
         /** @var Subscription $subscription */
-        $subscription = $this->subscriptionRepository->findByUid($uid, false);
+        $subscription = $this->subscriptionRepository->findSubscriptionByUid($uid, false);
 
         $success = false;
         if ($subscription) {
