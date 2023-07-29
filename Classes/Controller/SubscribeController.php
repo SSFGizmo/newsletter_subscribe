@@ -68,6 +68,11 @@ class SubscribeController extends ActionController
      */
     private ?SubscriptionRepository $subscriptionRepository = null;
 
+    /*
+     * @var FormProtectionFactory
+     */
+    private ?FormProtectionFactory $formProtectionFactory = null;
+
     /**
      * @var OverrideEmptyFlexformValues
      */
@@ -81,6 +86,11 @@ class SubscribeController extends ActionController
     public function injectSubscriptionRepository(SubscriptionRepository $subscriptionRepository)
     {
         $this->subscriptionRepository = $subscriptionRepository;
+    }
+
+    public function injectFormProtectionFactory(FormProtectionFactory $formProtectionFactory)
+    {
+        $this->formProtectionFactory = $formProtectionFactory;
     }
 
     public function initializeAction(): void
@@ -108,9 +118,8 @@ class SubscribeController extends ActionController
      */
     public function showFormAction(Subscription $subscription = null, bool $spambotFailed = null): ResponseInterface
     {
-        $formToken = FormProtectionFactory::get('frontend')
-            ->generateToken('Subscribe', 'showForm', $this->request->getAttribute('currentContentObject')->data['uid']);
-
+        $formProtection = $this->formProtectionFactory->createFromRequest($this->request);
+        $formToken = $formProtection->generateToken('Subscribe', 'showForm', $this->request->getAttribute('currentContentObject')->data['uid']);
         $fields = array_map('trim', explode(',', $this->settings['showFields']));
 
         if ($this->settings['useSimpleSpamPrevention'] ?? null) {
@@ -137,8 +146,8 @@ class SubscribeController extends ActionController
      */
     public function showUnsubscribeFormAction(?string $message = null): ResponseInterface
     {
-        $formToken = FormProtectionFactory::get('frontend')
-            ->generateToken('Subscribe', 'showUnsubscribeForm', $this->request->getAttribute('currentContentObject')->data['uid']);
+        $formProtection = $this->formProtectionFactory->createFromRequest($this->request);
+        $formToken = $formProtection->generateToken('Subscribe', 'showUnsubscribeForm', $this->request->getAttribute('currentContentObject')->data['uid']);
 
         $this->view->assignMultiple([
             'dataProtectionPage' => $this->settings['dataProtectionPage'],
@@ -157,10 +166,12 @@ class SubscribeController extends ActionController
      */
     public function createUnsubscribeMailAction(?string $email = null): ?ResponseInterface
     {
-        if (!FormProtectionFactory::get('frontend')
-            ->validateToken(
+        $formProtection = $this->formProtectionFactory->createFromRequest($this->request);
+        if (!$formProtection->validateToken(
                 (string)($this->request->getParsedBody()['formToken'] ?? ''),
-                'Subscribe', 'showUnsubscribeForm', $this->request->getAttribute('currentContentObject')->data['uid']
+                'Subscribe', 
+                'showUnsubscribeForm', 
+                $this->request->getAttribute('currentContentObject')->data['uid']
             )) {
             $this->redirect('showUnsubscribeForm');
         }
@@ -226,7 +237,7 @@ class SubscribeController extends ActionController
                 !empty($this->request->getParsedBody()['iAmNotASpamBotHere'] ?? '') ||
                 ($this->request->getParsedBody()['iAmNotASpamBot'] ?? '') != $GLOBALS['TSFE']->fe_user->getKey('ses', 'i_am_not_a_robot')
             ) {
-                sleep($this->settings['spamTimeout']);
+                sleep((int)$this->settings['spamTimeout']);
                 return (new ForwardResponse('showForm'))->withArguments(['subscription' => $subscription, 'spambotFailed' => true]);
             }
         }
@@ -273,10 +284,12 @@ class SubscribeController extends ActionController
             }
         }
 
-        if (!FormProtectionFactory::get('frontend')
-            ->validateToken(
+        $formProtection = $this->formProtectionFactory->createFromRequest($this->request);
+        if (!$formProtection->validateToken(
                 (string)($this->request->getParsedBody()['formToken'] ?? ''),
-                'Subscribe', 'showForm', $this->request->getAttribute('currentContentObject')->data['uid']
+                'Subscribe', 
+                'showForm', 
+                $this->request->getAttribute('currentContentObject')->data['uid']
             )) {
             return (new ForwardResponse('showForm'))->withArguments(['subscription' => $subscription]);
         }
@@ -501,6 +514,9 @@ class SubscribeController extends ActionController
         $site = $siteFinder->getSiteByPageId($GLOBALS['TSFE']->id);
         $languageAspect = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getAspect('language');
         $language = $site->getLanguageById($languageAspect->getId());
+        //@TODO
+        //$language->getLocale()->getLanguageCode();
+
         return $language->getTwoLetterIsoCode();
     }
 
