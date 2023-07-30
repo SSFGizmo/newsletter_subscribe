@@ -59,9 +59,9 @@ plugin {
 			useSimpleSpamPrevention = {$plugin.tx_newslettersubscribe.settings.useSimpleSpamPrevention}
 			spamTimeout = {$plugin.tx_newslettersubscribe.settings.spamTimeout}
 
-			useHCaptcha = 0
-			hCaptchaSiteKey = 10000000-ffff-ffff-ffff-000000000001
-			hCaptchaSecretKey = 0x0000000000000000000000000000000000000000
+			useHCaptcha = {$plugin.tx_newslettersubscribe.settings.useHCaptcha}
+			hCaptchaSiteKey = {$plugin.tx_newslettersubscribe.settings.hCaptchaSiteKey}
+			hCaptchaSecretKey = {$plugin.tx_newslettersubscribe.settings.hCaptchaSecretKey}
 
 			mailTemplateRootPath = EXT:newsletter_subscribe/Resources/Private/Templates/Mail/
 			mailLayoutRootPath = EXT:core/Resources/Private/Layouts/

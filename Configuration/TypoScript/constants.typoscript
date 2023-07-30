@@ -24,6 +24,10 @@ plugin {
             useSimpleSpamPrevention = 1
             spamTimeout = 5
 
+            useHCaptcha = 0
+            hCaptchaSiteKey = 10000000-ffff-ffff-ffff-000000000001
+            hCaptchaSecretKey = 0x0000000000000000000000000000000000000000
+
             # uid of page with data protection information (if any)
             dataProtectionPage = 1
 
