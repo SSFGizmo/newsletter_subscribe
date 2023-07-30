@@ -20,6 +20,19 @@ plugin {
 
             adminEmail = admin.name@domain.tld
             adminName = Your admin name
+
+            useSimpleSpamPrevention = 1
+            spamTimeout = 5
+
+            # uid of page with data protection information (if any)
+            dataProtectionPage = 1
+
+            # used in several places
+            newsletterName = Newsletter
+            # Page with SubscriptinForm (used in E-Mail-Templates)
+            subscribePageUid = 23
+            # whether the admin should get an info mail on every confirmation
+            sendAdminInfo = 0
         }
     }
 }
