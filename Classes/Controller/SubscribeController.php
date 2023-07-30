@@ -108,7 +108,7 @@ class SubscribeController extends ActionController
     {
         $formProtection = $this->formProtectionFactory->createFromRequest($this->request);
         $formToken = $formProtection->generateToken('Subscribe', 'showForm', $this->request->getAttribute('currentContentObject')->data['uid']);
-        $fields = array_map('trim', explode(',', $this->settings['showFields']));
+        $fields = GeneralUtility::trimExplode(',', (string)$this->settings['showFields'], true);
 
         if ($this->settings['useSimpleSpamPrevention'] ?? null) {
             $iAmNotASpamBotValue = bin2hex(random_bytes(16));
@@ -358,7 +358,6 @@ class SubscribeController extends ActionController
      */
     public function unsubscribeAction(?int $uid = null, ?string $subscriptionHash = null): ResponseInterface
     {
-
         /** @var Subscription $subscription */
         $subscription = $this->subscriptionRepository->findSubscriptionByUid($uid, false);
         $success = false;
