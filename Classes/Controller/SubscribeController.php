@@ -46,7 +46,7 @@ use Zwo3\NewsletterSubscribe\Domain\Repository\SubscriptionRepository;
 use Zwo3\NewsletterSubscribe\Event\SubscriptionCancelledEvent;
 use Zwo3\NewsletterSubscribe\Event\SubscriptionChangedEvent;
 use Zwo3\NewsletterSubscribe\Event\SubscriptionConfirmedEvent;
-use Zwo3\NewsletterSubscribe\Traits\OverrideEmptyFlexformValuesTrait;
+use Zwo3\NewsletterSubscribe\Utility\TypoScript;
 
 /**
  * Class SubscribeController
@@ -55,9 +55,6 @@ use Zwo3\NewsletterSubscribe\Traits\OverrideEmptyFlexformValuesTrait;
  */
 class SubscribeController extends ActionController
 {
-    //@TODO !!! => Call to a member function addNewArgument() on null
-    #use OverrideEmptyFlexformValuesTrait;
-
     /**
      * @var PersistenceManager
      */
@@ -73,29 +70,59 @@ class SubscribeController extends ActionController
      */
     private ?FormProtectionFactory $formProtectionFactory = null;
 
-    /**
-     * @var OverrideEmptyFlexformValues
-     */
-    protected $overrideFlexFormValues;
-
-    /**
-     * @var ConfigurationManagerInterface
-     */
-    protected $configurationManager;
-
-    public function injectSubscriptionRepository(SubscriptionRepository $subscriptionRepository)
+    public function injectSubscriptionRepository(SubscriptionRepository $subscriptionRepository): void
     {
         $this->subscriptionRepository = $subscriptionRepository;
     }
 
-    public function injectFormProtectionFactory(FormProtectionFactory $formProtectionFactory)
+    public function injectFormProtectionFactory(FormProtectionFactory $formProtectionFactory): void
     {
         $this->formProtectionFactory = $formProtectionFactory;
     }
 
     public function initializeAction(): void
     {
+        $this->buildSettings();
         $this->persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);
+    }
+
+    /**
+     * from "news" Extension
+     */
+    public function buildSettings(): void
+    {
+        $tsSettings = $this->configurationManager->getConfiguration(
+            \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
+            'NewsletterSubscribe',
+            'newslettersubscribe_subscribe'
+        );
+
+        $originalSettings = $this->configurationManager->getConfiguration(
+            \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS
+        );
+
+        // Use stdWrap for given defined settings
+        if (isset($originalSettings['useStdWrap']) && !empty($originalSettings['useStdWrap'])) {
+            $typoScriptService = GeneralUtility::makeInstance(TypoScriptService::class);
+            $typoScriptArray = $typoScriptService->convertPlainArrayToTypoScriptArray($originalSettings);
+            $stdWrapProperties = GeneralUtility::trimExplode(',', $originalSettings['useStdWrap'], true);
+            foreach ($stdWrapProperties as $key) {
+                if (is_array($typoScriptArray[$key . '.'])) {
+                    $originalSettings[$key] = $this->configurationManager->getContentObject()->stdWrap(
+                        $typoScriptArray[$key],
+                        $typoScriptArray[$key . '.']
+                    );
+                }
+            }
+        }
+
+        // start override
+        if (isset($tsSettings['settings']['overrideFlexformSettingsIfEmpty'])) {
+            $typoScriptUtility = GeneralUtility::makeInstance(TypoScript::class);
+            $originalSettings = $typoScriptUtility->override($originalSettings, $tsSettings);
+        }
+
+        $this->settings = $originalSettings;
     }
 
     /**
@@ -107,7 +134,11 @@ class SubscribeController extends ActionController
     public function showFormAction(Subscription $subscription = null, bool $spambotFailed = null): ResponseInterface
     {
         $formProtection = $this->formProtectionFactory->createFromRequest($this->request);
-        $formToken = $formProtection->generateToken('Subscribe', 'showForm', $this->request->getAttribute('currentContentObject')->data['uid']);
+        $formToken = $formProtection->generateToken(
+            'Subscribe', 
+            'showForm', 
+            $this->request->getAttribute('currentContentObject')->data['uid']
+        );
         $fields = GeneralUtility::trimExplode(',', (string)$this->settings['showFields'], true);
 
         if ($this->settings['useSimpleSpamPrevention'] ?? null) {
@@ -135,7 +166,11 @@ class SubscribeController extends ActionController
     public function showUnsubscribeFormAction(?string $message = null): ResponseInterface
     {
         $formProtection = $this->formProtectionFactory->createFromRequest($this->request);
-        $formToken = $formProtection->generateToken('Subscribe', 'showUnsubscribeForm', $this->request->getAttribute('currentContentObject')->data['uid']);
+        $formToken = $formProtection->generateToken(
+            'Subscribe', 
+            'showUnsubscribeForm', 
+            $this->request->getAttribute('currentContentObject')->data['uid']
+        );
 
         $this->view->assignMultiple([
             'dataProtectionPage' => $this->settings['dataProtectionPage'],
@@ -495,7 +530,7 @@ class SubscribeController extends ActionController
      *
      * @return string
      */
-    protected function getTwoLetterIsoCodeFromSiteConfig() 
+    protected function getTwoLetterIsoCodeFromSiteConfig(): string 
     {
         $site = $this->request->getAttribute('site');
         $languageAspect = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Context\Context::class)->getAspect('language');

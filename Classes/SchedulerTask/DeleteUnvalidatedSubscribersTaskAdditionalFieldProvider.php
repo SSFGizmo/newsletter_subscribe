@@ -96,7 +96,7 @@ class DeleteUnvalidatedSubscribersTaskAdditionalFieldProvider extends AbstractAd
         array &$submittedData,
         SchedulerModuleController $schedulerModule
     ): bool {
-        $submittedData['days'] = intval(trim($submittedData['newsletter_subscribe']['days']));
+        $submittedData['days'] = (int)(trim($submittedData['newsletter_subscribe']['days']));
         if (empty($submittedData['days']) || $submittedData['days'] < 7 || !is_int($submittedData['days'])) {
             $this->addMessage(
                 $this->getLanguageService()->sL('LLL:EXT:newsletter_subscribe/Resources/Private/Language/locallang.xlf:error.schedulerAge'),
