@@ -98,17 +98,6 @@ class SubscribeController extends ActionController
         $this->persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);
     }
 
-    public function initializeShowFormAction(bool $spambotFailed = null): void
-    {
-        if ($this->settings['useSimpleSpamPrevention'] ?? null) {
-            $iAmNotASpamBot = $this->request->getParsedBody()['iAmNotASpamBot'] ?? null;
-            if ($iAmNotASpamBot !== null && $iAmNotASpamBot != $GLOBALS['TSFE']->fe_user->getKey('ses', 'i_am_not_a_robot')) {
-                //@TODO Call to undefined method TYPO3\CMS\Extbase\Mvc\Request::setArgument()
-                $this->request->setArgument('spambotFailed', true);
-            }
-        }
-    }
-
     /**
      * @param null|Subscription $subscription
      * @param bool $spambotFailed
@@ -122,7 +111,7 @@ class SubscribeController extends ActionController
         $fields = array_map('trim', explode(',', $this->settings['showFields']));
 
         if ($this->settings['useSimpleSpamPrevention'] ?? null) {
-            $iAmNotASpamBotValue = $token = bin2hex(random_bytes(16));
+            $iAmNotASpamBotValue = bin2hex(random_bytes(16));
             $GLOBALS['TSFE']->fe_user->setKey('ses', 'i_am_not_a_robot', $iAmNotASpamBotValue);
             $GLOBALS["TSFE"]->fe_user->storeSessionData();
             $this->view->assign('iAmNotASpamBotValue', $iAmNotASpamBotValue);

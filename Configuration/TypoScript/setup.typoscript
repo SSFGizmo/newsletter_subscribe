@@ -83,7 +83,6 @@ plugin {
 			sendAdminInfo = 0
 
 			overrideFlexformSettingsIfEmpty = senderEmail,senderName,adminEmail,adminName,subscribePageUid,mailTemplateRootPath,dataProtectionPage,adminName,showFields,newsletterName
-
 		}
 	}
 }
