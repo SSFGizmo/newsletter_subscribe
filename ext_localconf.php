@@ -10,11 +10,11 @@ call_user_func(
             'NewsletterSubscribe',
             'Subscribe',
             [
-                \Zwo3\NewsletterSubscribe\Controller\SubscribeController::class => 'showForm, createConfirmation, undosubscribe, unsubscribe, doConfirm, createUnsubscribeMail',
+                \Zwo3\NewsletterSubscribe\Controller\SubscribeController::class => 'showForm, createConfirmation, unsubscribe, doConfirm, createUnsubscribeMail',
             ],
             // non-cacheable actions
             [
-                \Zwo3\NewsletterSubscribe\Controller\SubscribeController::class => 'showForm, createConfirmation, undosubscribe, unsubscribe, doConfirm, createUnsubscribeMail',
+                \Zwo3\NewsletterSubscribe\Controller\SubscribeController::class => 'showForm, createConfirmation, unsubscribe, doConfirm, createUnsubscribeMail',
             ]
         );
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(

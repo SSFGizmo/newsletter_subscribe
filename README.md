@@ -180,8 +180,8 @@ routeEnhancers:
           confirm: subscriptionHash
           uid: uid
       -
-        routePath: '/undosubscribe/{unsubscribe}/{uid}'
-        _controller: 'Subscribe::undosubscribe'
+        routePath: '/unsubscribe/{unsubscribe}/{uid}'
+        _controller: 'Subscribe::unsubscribe'
         _arguments:
           unsubscribe: subscriptionHash
           uid: uid
@@ -190,8 +190,8 @@ routeEnhancers:
 1. First add the field subscription_hash to the fields of direct mail in the extension configuration of direct mail: 
 ![direct mail configuration](https://github.com/Gregor-Agnes/newsletter_subscribe/blob/master/Resources/Public/images/ExtManDirectMail1.png)
 2. Add the link in your mail template:\
-`<a href="http://www.domain.tld/page/undosubscribe/###USER_subscription_hash###/###USER_uid###">unsubscribe</a>`
-where this `undosubscribe/###USER_subscription_hash###/###USER_uid###"` is the important part.<br>Note: The subscribe plugin must be inserted on the page "page" in that url.
+`<a href="http://www.domain.tld/page/unsubscribe/###USER_subscription_hash###/###USER_uid###">unsubscribe</a>`
+where this `unsubscribe/###USER_subscription_hash###/###USER_uid###"` is the important part.<br>Note: The subscribe plugin must be inserted on the page "page" in that url.
 
 ## Salutation in direct_mail
 1. Add 'salutation' field (see above 'subscription_hash')

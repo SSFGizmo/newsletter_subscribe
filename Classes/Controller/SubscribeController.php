@@ -21,6 +21,7 @@ use TYPO3\CMS\Core\FormProtection\FormProtectionFactory;
 use TYPO3\CMS\Core\Http\ImmediateResponseException;
 use TYPO3\CMS\Core\Mail\FluidEmail;
 use TYPO3\CMS\Core\Mail\Mailer;
+use TYPO3\CMS\Core\Mail\MailerInterface;
 use TYPO3\CMS\Core\Mail\MailMessage;
 use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -427,11 +428,6 @@ class SubscribeController extends ActionController
         return $this->htmlResponse();
     }
 
-    public function undosubscribeAction(?int $uid = null, ?string $subscriptionHash = null): ?ResponseInterface
-    {
-        $this->redirect('unsubscribe', null, null, compact('uid', 'subscriptionHash'));
-    }
-
     /**
      * @param int $uid
      * @param string $subscriptionHash
@@ -590,20 +586,19 @@ class SubscribeController extends ActionController
 
         /** @var FluidEmail $email */
         $email = GeneralUtility::makeInstance(FluidEmail::class, $templatePaths);
-        $email->format('html');
+        $email->format(FluidEmail::FORMAT_HTML);
         $email
             ->to(new Address(...$recipient))
             ->from(new Address(...$sender))
             ->subject($subject)
-            ->html('')// only HTML mail
             ->setTemplate($templateName)
             ->assignMultiple($variables);
 
         if ($replyTo) {
             $email->replyTo(new Address(...$replyTo));
         }
-
-        GeneralUtility::makeInstance(Mailer::class)->send($email);
+        $email->setRequest($this->request);
+        GeneralUtility::makeInstance(MailerInterface::class)->send($email);
 
         return true;
     }
