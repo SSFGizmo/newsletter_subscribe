@@ -17,6 +17,7 @@ namespace Zwo3\NewsletterSubscribe\Controller;
 use Doctrine\Common\Annotations\Annotation\IgnoreAnnotation;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Mime\Address;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\FormProtection\FormProtectionFactory;
 use TYPO3\CMS\Core\Http\ImmediateResponseException;
 use TYPO3\CMS\Core\Mail\FluidEmail;
@@ -126,6 +127,17 @@ class SubscribeController extends ActionController
         $this->settings = $originalSettings;
     }
 
+    protected function getExtensionConfiguration(): array
+    {
+        return GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('newsletter_subscribe');
+    }
+
+    protected function useSimpleSpamPrevention(): bool
+    {
+        $backendConfiguration = $this->getExtensionConfiguration();
+        return (bool)($backendConfiguration['useSimpleSpamPrevention'] ?? false);
+    }
+
     /**
      * @param null|Subscription $subscription
      * @param bool $spambotFailed
@@ -142,7 +154,7 @@ class SubscribeController extends ActionController
         );
         $fields = GeneralUtility::trimExplode(',', (string)$this->settings['showFields'], true);
 
-        if ($this->settings['useSimpleSpamPrevention'] ?? null) {
+        if ($this->useSimpleSpamPrevention()) {
             $iAmNotASpamBotValue = bin2hex(random_bytes(16));
             $GLOBALS['TSFE']->fe_user->setKey('ses', 'i_am_not_a_robot', $iAmNotASpamBotValue);
             $GLOBALS["TSFE"]->fe_user->storeSessionData();
@@ -256,7 +268,7 @@ class SubscribeController extends ActionController
      */
     public function createConfirmationAction(Subscription $subscription): ResponseInterface
     {
-        if ($this->settings['useSimpleSpamPrevention'] ?? false) {
+        if ($this->useSimpleSpamPrevention()) {
             if (
                 !empty($this->request->getParsedBody()['iAmNotASpamBotHere'] ?? '') ||
                 ($this->request->getParsedBody()['iAmNotASpamBot'] ?? '') != $GLOBALS['TSFE']->fe_user->getKey('ses', 'i_am_not_a_robot')

@@ -95,7 +95,7 @@ the field "delete" wouldn't be generated otherwise. Use Scheduler Task to delete
     <td>null</td>
   </tr>
   <tr>
-    <th align="left">useSimpleSpamPrevention</th>
+    <th align="left">useSimpleSpamPrevention<br>(Extension Configuration)</th>
     <td align="left">whether there should be a simple spam preventition using javascript and session (with <strong>session cookie</strong>)</td>
     <td>bool</td>
     <td>1</td>
