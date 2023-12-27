@@ -51,7 +51,7 @@ class DeleteUnvalidatedSubscribersTaskAdditionalFieldProvider extends AbstractAd
         }
         // Write the code for the field
         $fieldID = 'task_days';
-        $fieldCode = '<input type="text" class="form-control" name="tx_scheduler[newsletter_subscribe][days]" id="' . $fieldID . '" value="' . htmlspecialchars($taskInfo['days']) . '" size="30">';
+        $fieldCode = '<input type="text" class="form-control" name="tx_scheduler[newsletter_subscribe][days]" id="' . $fieldID . '" value="' . htmlspecialchars((string)$taskInfo['days']) . '" size="30">';
         $additionalFields[$fieldID] = [
             'code' => $fieldCode,
             'label' => $this->getLanguageService()->sL('LLL:EXT:newsletter_subscribe/Resources/Private/Language/locallang.xlf:schedulerAge'),
@@ -74,7 +74,7 @@ class DeleteUnvalidatedSubscribersTaskAdditionalFieldProvider extends AbstractAd
         }
         // Write the code for the field
         $fieldID = 'task_pids';
-        $fieldCode = '<input type="text" class="form-control" name="tx_scheduler[newsletter_subscribe][pids]" id="' . $fieldID . '" value="' . htmlspecialchars($taskInfo['pids']) . '" size="30">';
+        $fieldCode = '<input type="text" class="form-control" name="tx_scheduler[newsletter_subscribe][pids]" id="' . $fieldID . '" value="' . htmlspecialchars((string)$taskInfo['pids']) . '" size="30">';
         $additionalFields[$fieldID] = [
             'code' => $fieldCode,
             'label' => $this->getLanguageService()->sL('LLL:EXT:newsletter_subscribe/Resources/Private/Language/locallang.xlf:schedulerPids'),
