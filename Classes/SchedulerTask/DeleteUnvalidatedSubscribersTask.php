@@ -10,7 +10,9 @@ class DeleteUnvalidatedSubscribersTask extends AbstractTask
 {
     /** @var int  */
     public $days;
-    
+    /** @var string  */
+    public $pids;
+
     public function execute()
     {
         $businessLogic = GeneralUtility::makeInstance(DeleteUnvalidatedSubscribers::class);
